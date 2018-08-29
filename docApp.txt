@@ -1,0 +1,82 @@
+Application's instructions
+
+SIMILARITY
+
+Injective mapping between attributes of a source relation 
+and a target relation.
+In order to find the best matching, the method used is the
+Hungarian algorithm.
+Default seed : 100
+Default percent (amount of data used) : 100
+
+AGREGATE
+
+Agregation between 2 files, the application will find the best
+match of a source's tuple with a target's tuple by using a
+distance method. The best match of a tuple has the minimal
+distance with its test. 
+Default distance method : Min Max
+
+MULTIAGREGATE
+
+Create the agregation between all tuples of a source with all
+tuples of a target. For each comparison, it'll return an array
+of the respective distance of each attribute.
+Default distance method : Min Max
+
+--------------------------------------------------------------
+
+FILE FORMAT
+
+The input file must be csv file.
+Each line of a file must have 12 columns separate with a comma
+Columns: id mag_r u-g g-r r-i i-z z_spec feat1 feat2 feat3 feat4 feat5
+id: SDSS ObjID
+mag_r: dered_r magnitude
+u-g to i-z: respective dereddened colours
+z_spec: spectroscopic redshift
+feat1: mag_r normalized to have 0 mean and 1 stdev
+feat2: u-g colour normalized similarly
+feat3: g-r colour normalized similarly
+feat4: r-i colour normalized similarly
+feat5: i-z colour normalized similarly
+
+DISTANCE METHODS
+
+You can add/delete/modify all the distance methods in the file :
+functionAgreg.py
+For example, adding a new method
+1 - Add the name of the function in the name_agregation method
+2 - Add the name of the method in the dictionnary of the 
+    function_agregation method
+3 - Create the method of the distance :
+	1st arg : source (array)
+	2nd arg : target (array)
+	3rd arg : priority (array)
+	4th arg : tab (boolean)
+		  if you want to return the sum of the value
+		  (AGREGATE) or an array of each value (MULTIAGREGATE)
+
+PRIORITY
+
+The priority input can give different priority for each attribute
+Default priority is 1;1;1;1;1 (string) which gives equal priority
+for each attributes.
+The priority depends on the distance method used.
+
+Format of the priority :
+1;1;1;1;1 = default
+1 2 3 4 5 = space can replace ;
+1;2 3 4;5 = works too
+1;2       = the 3 missing values will be 1 (default)
+1 2 3 4 5 6 = after 5 values, the rest will be ignored
+Two different ways to write decimals : 1.3 or 1,3
+
+--------------------------------------------------------------
+
+WARNING
+
+If the application freezes there is no problem, with large amount of data,
+the different algorithms used can take time.
+
+Be careful of your ram capacity while working on large amount of data

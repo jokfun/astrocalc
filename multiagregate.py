@@ -7,17 +7,6 @@ from priority import createPriority
 import functionAgreg as fagr
 import os
 
-def createAgreg(search,target,method,priority):
-    """
-        Make the agregation of each tuple between the source file and the target file
-    """
-    result = []
-    for k in search:
-        for i in range(0,len(target)):
-            test = method(k[1],target[i][1],priority,tab=True)
-            result.append([k[0],target[i][0],test])
-    return result
-
 class multiagreg:
 
     def __init__(self,win):
@@ -66,17 +55,26 @@ class multiagreg:
                                         initialdir=rep,
                                         initialfile=nomfile,
                                         filetypes = [("txt files",".txt")])
-        
-    def savefile(self,savedata):
+
+    def createAgreg(self,search,target,method,priority,savetext):
         """
-            Write the result in the save file selected
+            Make the agregation of each tuple between the source file and the target file
+            Save the result in the save file
         """
         savemsg = ""
         try:
             if(len(self.repfic)>0):
                 f = open(self.repfic+".txt","w")
-                for k in savedata:
+                for k in savetext:
                     f.write(k)
+                try:
+                    for k in search:
+                        for i in range(0,len(target)):
+                            test = method(k[1],target[i][1],priority,tab=True)
+                            #In order to reduce ram used, we save directly the result in the save file
+                            f.write(str(k[0][0])+","+str(target[i][0][0])+":"+str(test)+"\n")
+                except Exception as e:
+                    print(e)
                 f.close()
                 savemsg = "Results saved in : "+self.repfic+".txt"
             else:
@@ -85,16 +83,19 @@ class multiagreg:
             savemsg = 'Error while saving the file'
         self.errsave = Label(self.fen1, text =savemsg,justify="left")
         self.errsave.grid(row =8, column=3,sticky="w")
+
         
-    def resum(self,tab):
+    def resum(self):
         """
             All the result of the algorithms are converted in a comprehensive language
         """
         text = "Source : "+self.nameT1+"\n"+"Target : "+self.nameT2+"\n\n"
         text += "Method used :"+str(self.method)+"\n"
         text += "Priority array : "+str(self.tabpriority)+"\n\n"
+        """
         for k in tab:
             text+=str(k[0][0])+","+str(k[1][0])+":"+str(k[2])+"\n"
+        """
         return text
         
         
@@ -108,9 +109,8 @@ class multiagreg:
             self.source_ = create_inter_with(self.source)
             self.target_ = create_inter_with(self.target)
             self.tabpriority = createPriority(self.priority.get())
-            result = createAgreg(self.source_,self.target_,meth,self.tabpriority)
-            savetext = self.resum(result)
-            self.savefile(savetext)
+            savetext = self.resum()
+            self.createAgreg(self.source_,self.target_,meth,self.tabpriority,savetext)
             
         else:
             self.txtfile3.configure(text = "Missing files")
